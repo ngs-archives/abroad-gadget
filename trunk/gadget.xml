@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+<ModulePrefs title="AB-GUIDE" />
+<Content type="html">
+<![CDATA[
+<script type="text/javascript" src="http://www.ab-road.net/scripts/lib/jquery.js"></script>
+<script type="text/javascript">
+var resource = "http://localhost/hawaii.ryokou2.com/feeds/getfeed/?callback=?";
+var data = '';
+$(function(){$.getJSON(resource, data, function(json, status){
+	$.each(json.items, function(i){
+		html = '';
+		html += '<div class="item"><a target="_blank" href="'+this.link+'">';
+		html += '<span class="title">'+this.title+'</span>';
+		html += '<span class="img"><img src="'+this.imgPath+'" /></span>';
+		html += '<span class="description">'+this.description.substr(0,70)+'…<em class="continue">続きを読む</em></span>';
+		html += '</a></div>';
+		$("#main").append(html);
+	})
+})});
+</script>
+<style type="text/css">
+	div#main { overflow:scroll; height:200px; }
+	div.item { width:270px; clear:both; padding:5px; }
+	div.item span { display:block; }
+	div.item .title { font-size:12px; color:#666; padding:2px 0; font-weight:bold; }
+	div.item a { display:block; padding:5px; overflow:auto; background-color:#efefef; text-decoration:none; }
+	div.item a:hover { background-color:#fffad7; }
+	div.item a .img { width:70px; float:left; }
+	div.item a .img img { display:block; margin:0 auto; border:1px #ccc solid; padding:2px; background-color:#fff; }
+	div.item a .description { width:180px; padding-left:4px; float:right; font-size:12px; color:#333; text-decoration:none; }
+	div.item .continue { color:#00f; text-decoration:underline; font-style:normal; }
+</style>
+</head>
+<body>
+<div id="main">
+
+</div>
+]]>
+</Content>
+</Module>
