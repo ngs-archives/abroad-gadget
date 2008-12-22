@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+ <ModulePrefs title="Book">
+   <Require feature="opensocial-0.8"/>
+   <Require feature="dynamic-height"/>
+ </ModulePrefs>
+
+
+<Content type="html" view="profile">
+<![CDATA[
+<script type="text/javascript" src="http://www.func09.net/opensocial/hoge.js" ></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
+<script>
+function request(q) {  
+  var params = {};
+  params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
+  var url = "http://devlab.agektmr.com/Book/search.php?q=";
+  url += encodeURIComponent(q);
+  $("#results").empty();
+  gadgets.io.makeRequest(url, response, params);
+};
+function response(obj){
+  //console.log(obj.data);
+  var result = obj.data;
+  $.each(result.items, function(){
+    var img = this.s_image.url;
+    var title = this.title;
+    var url = this.url;
+    $("#results").append('<li><a href="'+url+'">'+title+'</a><img src="'+img+'" /><input type="button" value="add" onclick=\'putMessage("'+title+'")\'></li>');
+  gadgets.window.adjustHeight();
+
+})
+
+}
+$(function(){
+$("#search").submit(function(){
+request($("#query").val());
+return false;
+})
+})
+</script>
+
+<div style="padding:10px">
+
+<!--p>
+  <input id="comment" type="text" value="bbbb" />
+  <input type="button" value="put" onclick="putMessage($('comment').value)" />
+</p-->
+
+<div id="status" style="display:none">loading...</div>
+
+<h2>読書リスト</h2>
+<div id="content_div">
+</div>
+
+</div>
+
+
+<div style="padding:10px">
+<h2>検索</h2>
+<form action="#" id="search">
+<input type="text" name="query" id="query" />
+<input type="submit" value="検索" />
+</form>
+<ul id="results"></ul>
+
+</div>
+
+
+]]>
+</Content>
+
+</Module>
+
