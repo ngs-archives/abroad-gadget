@@ -8,15 +8,15 @@
 var resource = "http://hawaii.ryokou2.com/feeds/getfeed/?callback=?";
 var data = '';
 $(function(){$.getJSON(resource, data, function(json, status){
-$.each(json.items, function(i){
-html = '';
-html += '<div class="item"><a target="_blank" href="'+this.link+'">';
-html += '<span class="title">'+this.title+'</span>';
-html += '<span class="img"><img src="'+this.imgPath+'" /></span>';
-html += '<span class="description">'+this.description.substr(0,70)+'…<em class="continue">&#x7D9A;&#x304D;&#x3092;&#x8AAD;&#x3080;</em></span>';
-html += '</a></div>';
-$("#main").append(html);
-})
+	$.each(json.items, function(i){
+		html = '';
+		html += '<div class="item"><a target="_blank" href="'+this.link+'">';
+		html += '<span class="title">'+this.title+'</span>';
+		html += '<span class="img"><img src="'+this.imgPath+'" /></span>';
+		html += '<span class="description">'+this.description.substr(0,70)+'…<em class="continue">&#x7D9A;&#x304D;&#x3092;&#x8AAD;&#x3080;</em></span>';
+		html += '</a></div>';
+		$("#main").append(html);
+	})
 })});
 </script>
 <style type="text/css">
