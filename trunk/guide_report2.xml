@@ -27,7 +27,6 @@ function response(obj){
 	$("#main").append(html);
   });
   gadgets.window.adjustHeight();
-
 };
 $(function(){
 	request();
@@ -35,7 +34,7 @@ $(function(){
 
 </script>
 <style type="text/css">
-div#main { overflow:scroll; height:200px; }
+div#main {  }
 div.item { width:270px; clear:both; padding:5px 0; }
 div.item span { display:block; }
 div.item .title { font-size:12px; color:#666; padding:2px 0; font-weight:bold; }
