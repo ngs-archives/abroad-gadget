@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+<ModulePrefs title="AB-GUIDE" />
+<Content type="html">
+<![CDATA[
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
+<script type="text/javascript">
+function request(q) {  
+  var params = {};
+  params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.DOM;
+  var url = "http://www.ab-road.net/rss/index.rdf";
+  gadgets.io.makeRequest(url, response, params);
+};
+function response(obj){
+  console.log(obj);
+  var dom = obj.data;
+  $.each($("item", dom), function(){
+  	var id = $("link", $(this)).text().split("/").pop().replace(".html", '');
+  	var imgPath = "http://ab.ab-road.net/CSP/img/GID/REPORT/"+id.substr(-2)+"/"+id+"/"+id+"_1_s.jpg";
+  	console.log(id);
+  	html = '';
+	html += '<div class="item"><a target="_blank" href="'+$("link", $(this)).text()+'">';
+	html += '<span class="title">'+$("title", $(this)).text()+'</span>';
+	html += '<span class="img"><img src="'+imgPath+'" /></span>';
+	html += '<span class="description">'+$("description", $(this)).text().substr(0,70)+'…<em class="continue">&#x7D9A;&#x304D;&#x3092;&#x8AAD;&#x3080;</em></span>';
+	html += '</a></div>';
+	$("#main").append(html);
+  });
+  gadgets.window.adjustHeight();
+
+};
+$(function(){
+	request();
+});
+
+</script>
+<style type="text/css">
+div#main { overflow:scroll; height:200px; }
+div.item { width:270px; clear:both; padding:5px 0; }
+div.item span { display:block; }
+div.item .title { font-size:12px; color:#666; padding:2px 0; font-weight:bold; }
+div.item a { display:block; width:260px; padding:5px; overflow:auto; background-color:#efefef; text-decoration:none; }
+div.item a:hover { background-color:#fffad7; }
+div.item a .img { width:70px; float:left; }
+div.item a .img img { display:block; margin:0 auto; border:1px #ccc solid; padding:2px; background-color:#fff; }
+div.item a .description { width:180px; padding-left:4px; float:right; font-size:12px; color:#333; text-decoration:none; }
+div.item .continue { color:#00f; text-decoration:underline; font-style:normal; }
+</style>
+</head>
+<body>
+<div id="main">
+
+</div>
+]]>
+</Content>
+</Module>
+
+
+
