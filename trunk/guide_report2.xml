@@ -12,12 +12,10 @@ function request(q) {
   gadgets.io.makeRequest(url, response, params);
 };
 function response(obj){
-  console.log(obj);
   var dom = obj.data;
   $.each($("item", dom), function(){
   	var id = $("link", $(this)).text().split("/").pop().replace(".html", '');
   	var imgPath = "http://ab.ab-road.net/CSP/img/GID/REPORT/"+id.substr(-2)+"/"+id+"/"+id+"_1_s.jpg";
-  	console.log(id);
   	html = '';
 	html += '<div class="item"><a target="_blank" href="'+$("link", $(this)).text()+'">';
 	html += '<span class="title">'+$("title", $(this)).text()+'</span>';
