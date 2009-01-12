@@ -5,6 +5,7 @@
 <![CDATA[
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
 <script type="text/javascript">
+console.log(gadgets);
 function request(q) {  
   var params = {};
   params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.DOM;
@@ -24,7 +25,6 @@ function response(obj){
 	html += '</a></div>';
 	$("#main").append(html);
   });
-  console.log(gadgets);
   gadgets.window.adjustHeight();
 };
 $(function(){
