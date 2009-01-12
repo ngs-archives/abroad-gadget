@@ -24,6 +24,7 @@ function response(obj){
 	html += '</a></div>';
 	$("#main").append(html);
   });
+  console.log(gadgets);
   gadgets.window.adjustHeight();
 };
 $(function(){
