@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+<ModulePrefs title="AB-GUIDE" />
+<Content type="html">
+<![CDATA[
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
+<script type="text/javascript">
+function request() {
+  var req = opensocial.newDataRequest();
+  req.add(req.newFetchPersonRequest(
+            opensocial.IdSpec.PersonId.VIEWER),
+          "viewer");
+  req.send(handleRequestMe);
+};
+
+function handleRequestMe(data) {
+	console.log(data);
+  var viewer = data.get("viewer");
+  if (viewer.hadError()) {
+    //Handle error using viewer.getError()...
+    return;
+  }
+
+  //No error. Do something with viewer.getData()...
+}
+
+$(function(){
+	request();
+});
+
+</script>
+
+</head>
+<body>
+<div id="main">
+
+</div>
+]]>
+</Content>
+</Module>
+
+
+
