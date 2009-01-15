@@ -16,14 +16,12 @@ function request() {
 };
 
 function handleRequestMe(data) {
-	console.log(data);
   var viewer = data.get("viewer");
   if (viewer.hadError()) {
-    //Handle error using viewer.getError()...
     return;
   }
-
-  //No error. Do something with viewer.getData()...
+  console.log(viewer);
+  
 }
 
 $(function(){
