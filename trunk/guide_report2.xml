@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Module>
 <ModulePrefs title="AB-GUIDE" />
+<Require feature="opensocial-0.8"/>
+<Require feature="dynamic-height"/>
 <Content type="html">
 <![CDATA[
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
