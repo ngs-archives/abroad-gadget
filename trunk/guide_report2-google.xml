@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+<ModulePrefs title="AB-GUIDE">
+<Require feature="opensocial-0.8"/>
+<Require feature="dynamic-height"/>
+<Require feature="views"/>
+</ModulePrefs>
+<Content type="html" view="home">
+<![CDATA[
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
+<scritp type="text/javascript" src="http://jopensocial.googlecode.com/svn/trunk/src/jopensocial.js"></script>
+<script type="text/javascript">
+function request(q) {  
+  var params = {};
+  params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.DOM;
+  params[gadgets.io.RequestParameters.REFRESH_INTERVAL] = 0;
+  var url = "http://www.ab-road.net/rss/index.rdf";
+  gadgets.io.makeRequest(url, response, params);
+};
+function response(obj){
+  var dom = obj.data;
+  $.each($("item", dom), function(){
+  	var id = $("link", $(this)).text().split("/").pop().replace(".html", '');
+  	var imgPath = "http://ab.ab-road.net/CSP/img/GID/REPORT/"+id.substr(-2)+"/"+id+"/"+id+"_1_s.jpg";
+  	html = '';
+	html += '<div class="item"><a target="_blank" href="'+$("link", $(this)).text()+'">';
+	html += '<span class="title">'+$("title", $(this)).text()+'</span>';
+	html += '<span class="img"><img src="'+imgPath+'" /></span>';
+	html += '<span class="description">'+$("description", $(this)).text().substr(0,100)+'…<em class="continue">&#x7D9A;&#x304D;&#x3092;&#x8AAD;&#x3080;</em></span>';
+	html += '</a></div>';
+	$("#main").append(html);
+  });
+  console.log(gadgets);
+  gadgets.window.adjustHeight();
+};
+$(function(){
+	request();
+console.log(gadgets);
+});
+
+</script>
+<style type="text/css">
+div#main {  }
+div.item { clear:both; padding:5px 0; }
+div.item span { display:block; }
+div.item .title { font-size:12px; color:#666; padding:2px 0; font-weight:bold; }
+div.item a { display:block; padding:5px; overflow:auto; background-color:#efefef; border:1px solid #ccc; text-decoration:none; }
+div.item a:hover { background-color:#fffad7; border:1px solid #f6a838; }
+div.item a .img { width:70px; float:left; }
+div.item a .img img { display:block; margin:0 auto; border:1px #ccc solid; padding:2px; background-color:#fff; }
+div.item a .description { width:205px; padding-left:4px; float:right; font-size:12px; color:#333; text-decoration:none; }
+div.item .continue { color:#00f; text-decoration:underline; font-style:normal; }
+</style>
+</head>
+<body>
+<div id="main" class="home">
+</div>
+]]>
+</Content>
+
+<Content type="html" view="canvas">
+<![CDATA[
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
+<script type="text/javascript" src="http://jopensocial.googlecode.com/svn/trunk/src/jopensocial.js"></script>
+<script type="text/javascript">
+
+function getRecent(q) {  
+  var params = {};
+  params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.DOM;
+  var url = "http://www.ab-road.net/rss/index.rdf?rev=01";
+  gadgets.io.makeRequest(url, renderRecent, params);
+};
+function renderRecent(obj){
+  var dom = obj.data;
+  $.each($("item", dom), function(){
+  	var id = $("link", $(this)).text().split("/").pop().replace(".html", '');
+  	var imgPath = "http://ab.ab-road.net/CSP/img/GID/REPORT/"+id.substr(-2)+"/"+id+"/"+id+"_1_m.jpg";
+  	html = '';
+	html += '<div class="item" id="r'+id+'">';
+	html += '<a href="#" class="setStar">☆お気に入りに追加</a>';
+	html += '<a target="_blank" href="'+$("link", $(this)).text()+'">';
+	html += '<span class="title">'+$("title", $(this)).text()+'</span>';
+	html += '<span class="img"><img src="'+imgPath+'" /></span>';
+	html += '<span class="description">'+$("description", $(this)).text()+'</span>';
+	html += '</a></div>';
+	$("#recent").append(html);
+  });
+  $(".item .setStar").click(function(){addWishList($(this));return false;});
+  gadgets.window.adjustHeight();
+};
+
+function addWishList(item){
+	var id = item.parent().attr('id').substr(1);
+	$.opensocial.data.get("wish_list", "viewer", function(items){
+	    if(items){
+	    	var e = false;
+	    	$.each(items, function(){
+	    		if(this == id) e = true;
+	    	})
+	    	if(e)	return;
+	    	items.push(id);
+	    	console.log(items);
+	    	var val = items;
+	    }	    
+	    else{
+	    	var val = [id];
+	    }		
+		$.opensocial.data.set("wish_list", val, function(){
+	    	var title = $(".title", item.parent()).text();
+	    	$.opensocial.activity.send(title);
+	    	getWishList();
+		}) 				
+	}, false);	
+}
+function getWishList() {
+	$.opensocial.data.get("wish_list", "viewer", function(items){
+		if(!items) return;
+	    var param = '';
+	    $.each(items, function(){
+	    	param += this.toString()+',';
+	    });
+	    if(!(param.length>=1))	return;
+	    var url = 'http://abguide.ceed.jp/reports/listout/'+param+'/json/';
+		var params = {};
+		params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
+		params[gadgets.io.RequestParameters.REFRESH_INTERVAL] = 0;
+		gadgets.io.makeRequest(url, renderWishList, params);		
+		}, false);
+}
+function renderWishList(response){
+	var data = eval(response.text);
+	html = '';
+	$.each(data, function(){
+		var id = this.id;
+		html += '<div class="item" id="r'+id+'">';
+		html += '<a href="#" class="removeStar">×お気に入りから削除</a>';
+		html += '<a target="_blank" href="'+this.link+'">';
+		html += '<span class="title">'+this.title+'</span>';
+		html += '<span class="img"><img src="'+this.img_path+'" /></span>';
+		html += '<span class="description">'+this.description+'</span>';
+		html += '</a></div>';
+	});
+	$("#wishList").html(html);
+	$(".item .removeStar").click(function(){removeWishList($(this));return false;});
+}
+function removeWishList(item){
+	var id = item.parent().attr('id').substr(1);
+	$.opensocial.data.get("wish_list", "viewer", function(items){
+		var val = [];
+	    $.each(items, function(){
+	    	if(!(this.toString()==id))	val.push(this.toString());
+	    })		
+		$.opensocial.data.set("wish_list", val, getWishList);		
+	}, false);
+}
+function deleteData(){
+    var request = opensocial.newDataRequest();
+    request.add(request.newRemovePersonAppDataRequest("VIEWER", [ "wish_list"]));
+    request.send(function(){
+    	alert('deleted');
+    	getWishList();
+    });
+}
+$(function(){
+	getRecent();
+	getWishList();
+	$("#tab li a").click(function(){
+		$("#main").attr('class', $(this).parent().attr('class'));
+		return false;
+	})
+});
+</script>
+<style type="text/css">
+div#main { padding:0 10px; }
+div#main .block { width:500px; padding:10px; margin:0 15px;}
+ul#tab li { float:left; list-style:none; font-size:12px; text-align:center; }
+ul#tab li a { display:block; border:1px solid #ccc; border-bottom:none; padding:5px 0; width:100px; }
+ul#tab li.dummy { width:50px; }
+#main .container { clear:both; width:550px; border:1px solid #ccc; padding:5px; }
+.recent #wishList { display:none; }
+.recent #recent { display:block; }
+.recent li.recent a { background-color:#efefef; }
+.wishList li.wishList a { background-color:#efefef; }
+.wishList #recent { display:none; }
+.wishList #wishList { display:block; }
+div.item { clear:both; padding:5px; border:1px #ccc solid; margin:5px 0 0; }
+#wishList div.item { border:1px solid #AFCC93; }
+div.item span { display:block; }
+div.item .title { font-size:12px; color:#666; padding:2px 0 10px; font-weight:bold; }
+div.item .setStar,
+div.item .removeStar { font-size:12px; }
+div.item a { display:block; padding:5px; overflow:auto; background-color:#EDF5E5; border:1px solid #EDF5E5; text-decoration:none; }
+div.item a:hover { background-color:#fffad7; border:1px solid #f6a838; }
+div.item a .img { float:left; padding:0 10px; }
+div.item a .img img { display:block; margin:0 auto; border:1px #ccc solid; padding:2px; background-color:#fff; }
+div.item a .description { font-size:12px; color:#333; text-decoration:none; }
+div.item .continue { color:#00f; text-decoration:underline; font-style:normal; }
+</style>
+</head>
+<body>
+<div id="main" class="recent">
+<input type="button" value="delete" onClick="deleteData()" />
+<ul id="tab">
+<li class="dummy"></li>
+<li class="recent"><a href="">今日の記事</a></li>
+<li class="wishList"><a href="">お気に入り</a></li>
+<li class="dummy"></li>
+</ul>
+<div class="container">
+<div id="recent" class="block"></div>
+<div id="wishList" class="block"></div>
+</div>
+</div>
+]]>
+</Content>
+</Module>
+
+
+
